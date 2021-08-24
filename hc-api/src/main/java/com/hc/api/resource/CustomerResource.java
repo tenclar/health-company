@@ -20,4 +20,5 @@ public class CustomerResource {
 	public List<Customer> list(){
 		return customerRepository.findAll();
 	}
+	
 }
