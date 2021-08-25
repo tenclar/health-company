@@ -3,6 +3,7 @@ id SERIAL PRIMARY KEY NOT NULL,
 nome VARCHAR NOT NULL,
 cpf VARCHAR NOT NULL,
 datanascimento date NOT NULL
+
 );
 
 INSERT INTO customer (nome, cpf, datanascimento) values('Tenclar Valus da Silva', '12345678900', '1980-7-6');
