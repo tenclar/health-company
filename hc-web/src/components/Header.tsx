@@ -13,8 +13,10 @@ export function Header() {
       px="6"
       align="center"
     >
-      <Text 
-      display="flex"      
+      <Text
+      as="a"
+      href="/"
+      display="flex"
       alignItems="center"
       fontSize="30"
       fontWeight="bold"
@@ -25,8 +27,8 @@ export function Header() {
         <Text as="span" mr="4" color="blue.300">
         <GiHealthNormal   />
         </Text>
-        Health Customer 
-        <Text as="span" ml="1" color="blue.300">.</Text> 
+        Health Customer
+        <Text as="span" ml="1" color="blue.300">.</Text>
         </Text>
 
         <Flex
