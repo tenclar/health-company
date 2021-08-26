@@ -1,5 +1,7 @@
 package com.hc.api.resource;
 
+
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -7,6 +9,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +30,10 @@ import com.hc.api.service.CustomerService;
 @RestController
 @RequestMapping("/customers")
 public class CustomerResource {
-
+	
+	@Autowired
+	private MessageSource messageSource;
+	
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -50,13 +57,18 @@ public class CustomerResource {
 
 	@PostMapping
 	// @ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Customer> create(@Valid @RequestBody Customer customer, HttpServletResponse response) {
-
+	public ResponseEntity<?> create(@Valid @RequestBody Customer customer, HttpServletResponse response) {
+		Customer customerExist = customerRepository.findByCpf(customer.getCpf());
+		if(customerExist != null) {
+			String userMessage = messageSource.getMessage("cpf.existe", null, LocaleContextHolder.getLocale());					
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userMessage);
+			
+			
+		}else {
 		Customer customerSave = customerRepository.save(customer);
-
 		publisher.publishEvent(new UriEvent(this, response, customerSave.getId()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(customerSave);
-
+		}
 	}
 
 	@PutMapping("/{id}")

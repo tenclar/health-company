@@ -7,7 +7,7 @@ import com.hc.api.repository.customer.CustomerRepositoryQuery;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long>, CustomerRepositoryQuery {
 
-	
+	Customer findByCpf(String cpf);
 	
 	
 }
