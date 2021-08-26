@@ -1,6 +1,8 @@
 # health-company
 Lista - cadastro de Clientes
 
+![Alt text](.github/lista.png?raw=true "Title")
+
 
 ### 🔽 Requisitos
 1. Ter o NodeJs e Yarn instalado
