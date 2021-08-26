@@ -28,7 +28,7 @@ const InputComp: ForwardRefRenderFunction<HTMLInputElement, InputProps>  = (
         bgColor="gray.900"
         variant="filled"
         _hover={{ bgColor: "gray.900" }}
-        soze="lg"
+        size="lg"
         ref={ref}
         {...rest}
       />

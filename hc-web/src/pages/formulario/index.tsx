@@ -23,29 +23,17 @@ import { HeaderForm } from "../../components/HeaderForm";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { parse, isDate } from "date-fns";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from 'next/router';
 import getValidationErrors from "../../utils/getValidationErrors";
-import { useToast } from "../../hooks/Toast";
 import api from "../../services/api";
+import { useToast } from "../../hooks/Toast";
 
-
-type AddresFormData = {
-  id: number;
-  logradouro: string;
-  numero: number;
-  complemento: string;
-  bairro: string;
-  cep: string;
-  cidade: string;
-  estado: string;
-
-};
-type CreateFormData = {
+interface CreateFormData {
   nome: string;
   cpf: string;
   datanascimento: Date;
-  address?:AddresFormData[];
+  address?:[];
 };
 
 export default function formulario() {
@@ -61,82 +49,49 @@ export default function formulario() {
   });
 
   function parseDateString(value, originalValue) {
-      if(!originalValue){
-      const parsedDate = isDate(originalValue)
-        ? originalValue
-        : parse(originalValue, "yyyy-MM-dd", new Date());
+    const parsedDate = isDate(originalValue)
+      ? originalValue
+      : parse(originalValue, "yyyy-MM-dd", new Date());
 
-      return parsedDate;
-    }
+    return parsedDate;
+
   }
 
 
-
-  const { register, handleSubmit, formState, setValue } = useForm({
-    resolver: yupResolver(formShema)
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(formShema),
   });
-    const { errors } = formState;
 
-  /*   useEffect(() => {
-      customer(id as string).then(customer => {
-        const fields = ['name'];
-
-        fields.forEach(field => setValue(field, customer[field]));
-        setCustomer(customer);
-      })
-    }, []); */
-
-  useEffect(() => {
-    async function showCustomer(id: string | string[]): Promise<void> {
-      const response = await api.get(`/customers/${id}`);
-      setCustomer(response.data);
-
-       const address = response.data.address.map((a: any) => ({
-        customer_id: a.customer_id,
-      }));
-
-      /*  formRef.current?.setData({
-        nome: response.data.nome,
-        cpf: response.data.cpf,
-        datanascimento:response.data.datanascimento,
-        address: address,
-      }); */
-    }
-    if (query.id) {
-      showCustomer(query.id);
-    }
-  }, [query.id, setValue]);
-
-
+  const { errors } = formState;
 
   const handleSave: SubmitHandler<CreateFormData> = async (data) => {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
+
     try{
-        if (query.id) {
-          await api.put(`/customers/${query.id}`, {
-            nome: data.nome,
-            cpf: data.cpf,
-            datanascimento:data.datanascimento,
-            address:data.address
-          });
 
-          push('/');
-        }
-      } catch (err) {
+      await api.post('/customers', {
+        nome: data.nome,
+        cpf: data.cpf,
+        datanascimento:data.datanascimento,
+        address:data.address
+      });
 
-        if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err);
-          formRef.current?.setErrors(errors);
-          return;
-        }
 
-        addToast({
-          type: 'error',
-          title: 'Erro no Cadastro',
-          description: `Ocorreu um erro ao fazer Cadastro. ${err}`,
-        });
+    push('/');
+  } catch (err) {
+
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+        formRef.current?.setErrors(errors);
+        return;
       }
-    };
+      addToast({
+        type: 'error',
+        title: 'Erro no Cadastro',
+        description: 'Ocorreu um erro ao fazer Cadastro.',
+      });
+    }
+
+  };
 
 
 
@@ -145,14 +100,12 @@ export default function formulario() {
       <HeaderForm />
       <Flex w="100" my="6" maxWidth={1080} mx="auto" px="6">
         <Box
+         ref={formRef}
           as="form"
-          ref={formRef}
-
           flex="1"
           borderRadius={8}
           bg="gray.800"
           p="8"
-
           onSubmit={handleSubmit(handleSave)}
         >
           <Heading size="lg" fontWeight="normal">
@@ -162,22 +115,22 @@ export default function formulario() {
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing="8" w="100%">
               <InputText
-                defaultValue={customer?.nome}
+
                 name="nome"
                 label="Nome Completo"
                 error={errors.nome}
-                {...register('nome')}
+                {...register("nome")}
               />
 
               <InputText
-                defaultValue={customer?.cpf}
+
                 name="cpf"
                 label="CPF"
                 error={errors.cpf}
                 {...register("cpf")}
               />
               <InputText
-                defaultValue={String(customer?.datanascimento)}
+
                 type="date"
                 name="datanscimento"
                 label="Data de Nascimento"
@@ -207,9 +160,6 @@ export default function formulario() {
                       Complemento
                     </Th>
                     <Th textAlign="center" color="yellow.300">
-                      CEP
-                    </Th>
-                    <Th textAlign="center" color="yellow.300">
                       Bairro
                     </Th>
                     <Th textAlign="center" color="yellow.300">
@@ -221,11 +171,7 @@ export default function formulario() {
                   </Tr>
                 </Thead>
                 <Tbody>
-
-
-
-                    { customer?.address.map((addr) => (
-                  <Tr key={addr.id} >
+                  <Tr>
                     <Td textAlign="center">
                       <Button
                         as="a"
@@ -237,22 +183,19 @@ export default function formulario() {
                         Excluir
                       </Button>
                     </Td>
-                    <Td textAlign="center">{`${addr.logradouro},${addr.numero}`}</Td>
-                    <Td textAlign="center">{addr.complemento}</Td>
-                    <Td textAlign="center">{addr.cep}</Td>
-                    <Td textAlign="center">{addr.bairro}</Td>
-                    <Td textAlign="center">{addr.cidade}</Td>
-                    <Td textAlign="center">{addr.estado}</Td>
-
+                    <Td textAlign="center">Rua das couves, 124</Td>
+                    <Td textAlign="center">perto da casa azul</Td>
+                    <Td textAlign="center">Casa Preta</Td>
+                    <Td textAlign="center">Rio Branco</Td>
+                    <Td textAlign="center">AC</Td>
                   </Tr>
-                    ))}
                 </Tbody>
               </Table>
             </SimpleGrid>
           </VStack>
           <Flex mt="8" justify="flex-end">
             <HStack spacing="4">
-            <Button as="a" href="/" colorScheme="whiteAlpha">Cancelar</Button>
+              <Button as="a" href="/" colorScheme="whiteAlpha">Cancelar</Button>
               <Button type="submit" colorScheme="green">
                 Salvar
               </Button>
