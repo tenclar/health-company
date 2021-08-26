@@ -15,7 +15,6 @@ Cadastro -  de Clientes
 5. docker exec -it postgresdb psql -U postgres
 6. CREATE DATABASE gspdb
 
-
 ###  hc-api: Iniciando com o backend
 1. ``download sts-tools, api spring boot``
 2. ``abrir arquivo pom.xml para instalar as bibliotecas dependentes do projeto maven  ``
