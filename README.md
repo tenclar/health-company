@@ -1,7 +1,7 @@
 # health-company
 Lista -  de Clientes
 
-![Alt text](.github/lista.png?raw=true "Title")
+![Alt text](.github/listas.png?raw=true "Title")
 
 Cadastro -  de Clientes
 
