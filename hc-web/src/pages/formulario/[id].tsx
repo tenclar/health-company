@@ -16,6 +16,17 @@ import {
   Button,
   SimpleGrid,
   HStack,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  Input,
+  ModalFooter,
 } from "@chakra-ui/react";
 import { RiAddLine, RiCloseLine } from "react-icons/ri";
 import { InputText } from "../../components/Form/Input";
@@ -49,6 +60,11 @@ type CreateFormData = {
 };
 
 export default function formulario() {
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const initialRef = useRef()
+  const finalRef = useRef()
+
   const formRef = useRef(null);
   const { addToast } = useToast();
   const [customer, setCustomer] = useState<CreateFormData>();
@@ -141,6 +157,7 @@ export default function formulario() {
 
 
   return (
+    <>
     <Box>
       <HeaderForm />
       <Flex w="100" my="6" maxWidth={1080} mx="auto" px="6">
@@ -195,6 +212,7 @@ export default function formulario() {
                         size="sm"
                         fontSize="x-small"
                         colorScheme="blue"
+                        onClick={onOpen}
                         leftIcon={<Icon as={RiAddLine} />}
                       >
                         Novo
@@ -261,5 +279,59 @@ export default function formulario() {
         </Box>
       </Flex>
     </Box>
+
+
+<Modal
+initialFocusRef={initialRef}
+finalFocusRef={finalRef}
+isOpen={isOpen}
+onClose={onClose}
+>
+<ModalOverlay />
+<ModalContent bgColor="gray.800" >
+  <ModalHeader>Cadastro de Endereço</ModalHeader>
+  <ModalCloseButton />
+  <ModalBody pb={8}>
+    <FormControl>
+      <FormLabel>Logradouro</FormLabel>
+      <Input ref={initialRef} placeholder="Logradouro"  />
+    </FormControl>
+
+
+    <FormControl mt={4}>
+      <FormLabel>Numero</FormLabel>
+      <Input placeholder="Numero" />
+    </FormControl>
+    <FormControl mt={4}>
+      <FormLabel>Complemento</FormLabel>
+      <Input placeholder="Complemento" />
+    </FormControl>
+    <FormControl mt={4}>
+      <FormLabel>CEP</FormLabel>
+      <Input placeholder="CEP" />
+    </FormControl>
+    <FormControl mt={4}>
+      <FormLabel>Bairro</FormLabel>
+      <Input placeholder="Bairro" />
+    </FormControl>
+    <FormControl mt={4}>
+      <FormLabel>Cidade</FormLabel>
+      <Input placeholder="Cidade" />
+    </FormControl>
+    <FormControl mt={4}>
+      <FormLabel>Estado</FormLabel>
+      <Input placeholder="Estado" />
+    </FormControl>
+  </ModalBody>
+
+  <ModalFooter>
+    <Button colorScheme="blue" mr={3}>
+      Save
+    </Button>
+    <Button onClick={onClose}>Cancel</Button>
+  </ModalFooter>
+</ModalContent>
+</Modal>
+</>
   );
 }
